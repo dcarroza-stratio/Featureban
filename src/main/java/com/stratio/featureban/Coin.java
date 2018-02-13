@@ -1,10 +1,13 @@
 package com.stratio.featureban;
 
+import lombok.ToString;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+@ToString
 public enum Coin {
     HEADS, TAILS;
 
