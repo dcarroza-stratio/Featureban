@@ -41,10 +41,14 @@ public class Featureban {
     private void run() {
         List<DevMember> team = new ArrayList<>();
         for (int devMember = 1; devMember <= teamSize; devMember++) {
-            team.add(new DevMember(devMember));
+            DevMember newMember = new DevMember(devMember);
+            team.add(newMember);
+            board.startNewTask(newMember);
         }
 
         for (int day = 1; day <= numDays; day++) {
+            LOGGER.info("Day " + day);
+
             Map<DevMember, Coin> throwPerDevMember = new HashMap<DevMember, Coin>();
             for (int devMember = 0; devMember < teamSize; devMember++) {
                 Coin coin = Coin.throwIt();
@@ -52,11 +56,11 @@ public class Featureban {
                 throwPerDevMember.put(team.get(devMember), coin);
             }
 
-            LOGGER.info("Day " + day);
             //TODO parametrizable
-            Rules rules = new WithoutWipRules(board);
+            Rules rules = new WithWipRules(board, teamSize);
             teamStrategy.runDay(throwPerDevMember, rules);
 //            LOGGER.info(board.toString());
+            board.printBoardSummary();
         }
         board.printBoardSummary();
     }

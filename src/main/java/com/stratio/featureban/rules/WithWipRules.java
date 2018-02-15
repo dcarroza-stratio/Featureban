@@ -4,12 +4,15 @@ import com.stratio.featureban.Board;
 import com.stratio.featureban.DevMember;
 
 public class WithWipRules extends Rules {
-    public WithWipRules(Board board) {
+    public WithWipRules(Board board, int wip) {
         super(board);
+        board.setWip(wip);
     }
 
     @Override
     public boolean moveTaskForward(DevMember member) {
+        //TODO
+
         return board.moveTaskForward(member);
     }
 

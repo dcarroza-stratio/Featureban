@@ -11,7 +11,7 @@ public class Board {
 
     private static final Logger LOGGER = Logger.getLogger(Board.class.getName());
 
-    private Integer wip = null;
+    private Integer wip = Integer.MAX_VALUE;
 
     List<Task> tasksInBoard = new ArrayList<>();
 
@@ -21,12 +21,16 @@ public class Board {
             if (!task.isBlocked() && task.getTaskState() != TaskState.DONE){
                 switch (task.getTaskState()) {
                     case TO_DO:
-                        task.setTaskState(TaskState.IN_PROGRESS);
-                        moved = true;
+                        if (!isInProgressColumnLimited()) {
+                            task.setTaskState(TaskState.IN_PROGRESS);
+                            moved = true;
+                        }
                         break;
                     case IN_PROGRESS:
-                        moved = true;
-                        task.setTaskState(TaskState.IN_REVIEW);
+                        if (!isInReviewColumnLimited()) {
+                            task.setTaskState(TaskState.IN_REVIEW);
+                            moved = true;
+                        }
                         break;
                     case IN_REVIEW:
                         moved = true;
@@ -41,9 +45,32 @@ public class Board {
         return moved;
     }
 
+    private boolean isInReviewColumnLimited() {
+        int count = 0;
+        for (Task task : this.tasksInBoard) {
+            if (task.getTaskState() == TaskState.IN_REVIEW){
+                count++;
+            }
+        }
+        return count >= wip;
+    }
+
+    private boolean isInProgressColumnLimited() {
+        int count = 0;
+        for (Task task : this.tasksInBoard) {
+            if (task.getTaskState() == TaskState.IN_PROGRESS){
+                count++;
+            }
+        }
+        return count >= wip;
+    }
+
     public void startNewTask(DevMember devMember){
-        //TODO WIP
-        tasksInBoard.add(new Task(devMember));
+        Task newTask = new Task(devMember);
+        tasksInBoard.add(newTask);
+        if (!isInProgressColumnLimited()) {
+            newTask.setTaskState(TaskState.IN_PROGRESS);
+        }
     }
 
     public List<Task> getTasksFromDev(DevMember devMember){
@@ -120,6 +147,10 @@ public class Board {
         LOGGER.info("In Progress: " + inProgressColumn.size());
         LOGGER.info("In Review: " + inReviewColumn.size());
         LOGGER.info("Done: " + doneColumn.size());
+    }
+
+    public void setWip(int wip) {
+        this.wip = wip;
     }
 
 //    @Override

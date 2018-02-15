@@ -8,7 +8,7 @@ public class Task implements Comparable<Task> {
 
     public Task(DevMember devMember) {
         this.devMemberAssigned = devMember;
-        taskState = TaskState.IN_PROGRESS;
+        taskState = TaskState.TO_DO;
     }
 
     public boolean isMine(DevMember devMember){
