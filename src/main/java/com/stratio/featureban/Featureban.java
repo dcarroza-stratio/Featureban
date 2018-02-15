@@ -1,5 +1,10 @@
 package com.stratio.featureban;
 
+import com.stratio.featureban.rules.Rules;
+import com.stratio.featureban.rules.WithWipRules;
+import com.stratio.featureban.rules.WithoutWipRules;
+import com.stratio.featureban.strategy.TeamStrategy;
+import com.stratio.featureban.strategy.MoveFirstStrategy;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -7,15 +12,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Game {
+public class Featureban {
 
-    private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Featureban.class.getName());
 
     private int teamSize;
     private int numDays;
+    private TeamStrategy teamStrategy = new MoveFirstStrategy();
     private Board board = new Board();
 
-    public Game(int teamSize, int numDays) {
+    public Featureban(int teamSize, int numDays) {
         this.teamSize = teamSize;
         this.numDays = numDays;
     }
@@ -27,8 +33,9 @@ public class Game {
         int teamSize = 4;
         int numDays = 10;
 
-        Game game = new Game(teamSize, numDays);
-        game.run();
+        Featureban featureban = new Featureban(teamSize, numDays);
+
+        featureban.run();
     }
 
     private void run() {
@@ -45,28 +52,12 @@ public class Game {
                 throwPerDevMember.put(team.get(devMember), coin);
             }
 
-            doDaily(day, throwPerDevMember);
+            LOGGER.info("Day " + day);
+            //TODO parametrizable
+            Rules rules = new WithoutWipRules(board);
+            teamStrategy.runDay(throwPerDevMember, rules);
+//            LOGGER.info(board.toString());
         }
-
-    }
-
-    private void doDaily(int day, Map<DevMember, Coin> throwPerDevMember) {
-        for (DevMember member : throwPerDevMember.keySet()) {
-            Coin coin = throwPerDevMember.get(member);
-            switch (coin) {
-                case HEADS:
-                    if (!board.moveTaskForward(member)){
-                        board.unblockTask(member);
-                    }
-                    break;
-                case TAILS:
-                    board.blockTask(member);
-                    board.startNewTask(member);
-                    break;
-            }
-        }
-        LOGGER.info("Day " + day);
-        LOGGER.info(board.toString());
         board.printBoardSummary();
     }
 
