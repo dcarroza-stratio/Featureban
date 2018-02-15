@@ -10,21 +10,23 @@ public class WithWipRules extends Rules {
 
     @Override
     public boolean moveTaskForward(DevMember member) {
-        return false;
+        return board.moveTaskForward(member);
     }
 
     @Override
     public boolean unblockTask(DevMember member) {
+        board.unblockTask(member);
         return false;
     }
 
     @Override
     public void blockTask(DevMember member) {
-
+        board.blockTask(member);
     }
 
     @Override
     public boolean startNewTask(DevMember devMember) {
-        return false;
+        board.startNewTask(devMember);
+        return true;
     }
 }

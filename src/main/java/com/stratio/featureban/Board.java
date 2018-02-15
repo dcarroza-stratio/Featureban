@@ -3,6 +3,7 @@ package com.stratio.featureban;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @lombok.ToString
@@ -52,6 +53,7 @@ public class Board {
                 myTasks.add(task);
             }
         }
+        Collections.sort(myTasks);
         return myTasks;
     }
 

@@ -1,7 +1,7 @@
 package com.stratio.featureban;
 
 @lombok.ToString
-public class Task {
+public class Task implements Comparable<Task> {
     private TaskState taskState;
     private DevMember devMemberAssigned;
     private boolean blocked;
@@ -33,5 +33,10 @@ public class Task {
 
     public void setTaskState(TaskState taskState) {
         this.taskState = taskState;
+    }
+
+    @Override
+    public int compareTo(Task task) {
+        return task.taskState.compareTo(taskState);
     }
 }
